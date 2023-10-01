@@ -23,7 +23,7 @@ public class User {
     private String password; //비밀번호
     private String nickName; //닉네임
     private String phoneNumber; //휴대폰 번호
-    private UserRole role;
+    private UserRole role; //유저유형
     private LocalDate createdAt; //생성일
     private LocalDate updatedAt; //수정일
 }
