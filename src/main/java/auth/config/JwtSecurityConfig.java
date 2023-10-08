@@ -1,5 +1,6 @@
 package auth.config;
 
+import auth.JwtTokenFilter;
 import auth.domain.UserRole;
 import auth.service.UserService;
 import lombok.RequiredArgsConstructor;
