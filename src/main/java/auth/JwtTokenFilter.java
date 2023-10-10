@@ -51,10 +51,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        //jwt token에서 loginId 추출
+        //jwt token에서 email 추출
         String email = JwtTokenUtil.getEmail(token, secretKey);
 
-        //추출한 loginId에서 유저 찾아오기
+        //추출한 email에서 유저 찾아오기
         User loginUser = userService.getLoginUserByEmail(email);
 
         //loginUser 정보로 UsernamePasswordAuthentication Token 발급
