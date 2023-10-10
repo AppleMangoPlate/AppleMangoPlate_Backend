@@ -28,14 +28,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         //Header의 authorization 값이 비어있다면, jwt token을 전송하지 않음 -> 로그인 x
-        if (authorizationHeader == null) {
+        if(authorizationHeader == null) {
             filterChain.doFilter(request, response);
 
             return;
         }
 
         //Header의 authorization 값이 'Bearer'로 시작하지 않는다면 -> 잘못된 토큰이다.
-        if (!authorizationHeader.startsWith("Bearer ")) {
+        if(!authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
 
             return;
@@ -45,7 +45,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = authorizationHeader.split(" ")[1];
 
         //전송받은 jwt token이 만료되었으면 -> 다음 필터 진행(인증 x)
-        if (JwtTokenUtil.isExpired(token, secretKey)) {
+        if(JwtTokenUtil.isExpired(token, secretKey)) {
             filterChain.doFilter(request, response);
 
             return;

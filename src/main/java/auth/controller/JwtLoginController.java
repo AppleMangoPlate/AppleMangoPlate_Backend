@@ -13,18 +13,18 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/jwt-login")
-public class jwtLoginController {
+public class JwtLoginController {
 
     private final UserService userService;
 
     @Value("${jwtmodule.secret-key}")
-    private static String secretKey;
+    private String secretKey;
 
     @PostMapping("/join")
     public String join(@RequestBody JoinRequest joinRequest) {
 
         // loginId 중복 체크
-        if(userService.checkemailDuplicate(joinRequest.getEmail())) {
+        if(userService.checkEmailDuplicate(joinRequest.getEmail())) {
             return "로그인 아이디가 중복됩니다.";
         }
         // 닉네임 중복 체크
@@ -32,7 +32,7 @@ public class jwtLoginController {
             return "닉네임이 중복됩니다.";
         }
         // password와 passwordCheck가 같은지 체크
-        if(!joinRequest.getPassword().equals(joinRequest.getPasswordChk())) {
+        if(!joinRequest.getPassword().equals(joinRequest.getPasswordCheck())) {
             return"바밀번호가 일치하지 않습니다.";
         }
 
@@ -60,8 +60,8 @@ public class jwtLoginController {
     public String userInfo(Authentication authentication) {
         User loginUser = userService.getLoginUserByEmail(authentication.getName());
 
-        return String.format("email : %s\nnickName : %s\nphoneNumber : %s\nrole : %s",
-                loginUser.getEmail(), loginUser.getNickName(), loginUser.getPhoneNumber(), loginUser.getRole().name());
+        return String.format("email : %s\nnickName : %s\nrole : %s",
+                loginUser.getEmail(), loginUser.getNickName(), loginUser.getRole().name());
     }
 
     @GetMapping("/admin")

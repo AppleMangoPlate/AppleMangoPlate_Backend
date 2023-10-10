@@ -1,6 +1,9 @@
 package auth.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,21 +12,19 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Getter
 @Builder
-@Table(name = "User")
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id; //유저번호
-    private String email; //유저 이메일(아이디)
-    private String password; //비밀번호
-    private String nickName; //닉네임
-    private String phoneNumber; //휴대폰 번호
-    private UserRole role; //유저유형
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String email;        //유저 이메일(아이디)
+    private String password;
+    private String nickName;
+    private UserRole role;
+    private String phoneNumber;
     private LocalDate createdAt; //생성일
     private LocalDate updatedAt; //수정일
 }
