@@ -60,8 +60,8 @@ public class JwtLoginController {
     public String userInfo(Authentication authentication) {
         User loginUser = userService.getLoginUserByEmail(authentication.getName());
 
-        return String.format("email : %s\nnickName : %s\nrole : %s",
-                loginUser.getEmail(), loginUser.getNickName(), loginUser.getRole().name());
+        return String.format("email : %s\nnickName : %s\nphoneNumber : %s\nrole : %s",
+                loginUser.getEmail(), loginUser.getNickName(), loginUser.getPhoneNumber(),loginUser.getRole().name());
     }
 
     @GetMapping("/admin")
