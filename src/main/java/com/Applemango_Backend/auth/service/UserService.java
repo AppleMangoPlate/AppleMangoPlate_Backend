@@ -1,11 +1,15 @@
 package com.Applemango_Backend.auth.service;
 
+import com.Applemango_Backend.auth.JwtTokenUtil;
 import com.Applemango_Backend.auth.domain.User;
+import com.Applemango_Backend.auth.dto.GlobalResDto;
 import com.Applemango_Backend.auth.dto.JoinRequest;
 import com.Applemango_Backend.auth.dto.LoginRequest;
+import com.Applemango_Backend.auth.repository.RefreshTokenRepository;
 import com.Applemango_Backend.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtTokenUtil jwtTokenUtil;
 
     // Spring Security를 사용한 로그인 구현 시 사용
     private final BCryptPasswordEncoder encoder;
@@ -33,15 +39,18 @@ public class UserService {
         return userRepository.existsByNickName(nickName);
     }
 
-
     //JoinRequest를 입력받아 User로 변환 후 저장
     //이 과정에서 비밀번호는 암호화되어 저장
-    public void join(JoinRequest request) {
+    @Transactional
+    public GlobalResDto join(JoinRequest request) {
         userRepository.save(request.toEntity(encoder.encode(request.getPassword())));
+        return new GlobalResDto("Success join", HttpStatus.OK.value());
     }
+
 
     //로그인 시, 아이디와 비밀번호가 일치하면 User return
     //아이디 혹은 비밀번호가 없거나 다르면 null return
+    @Transactional
     public User login(LoginRequest request) {
         Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
 
