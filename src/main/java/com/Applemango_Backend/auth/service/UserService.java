@@ -1,12 +1,15 @@
 package com.Applemango_Backend.auth.service;
 
 import com.Applemango_Backend.auth.JwtTokenUtil;
+import com.Applemango_Backend.auth.domain.RefreshToken;
 import com.Applemango_Backend.auth.domain.User;
 import com.Applemango_Backend.auth.dto.GlobalResDto;
 import com.Applemango_Backend.auth.dto.JoinRequest;
 import com.Applemango_Backend.auth.dto.LoginRequest;
+import com.Applemango_Backend.auth.dto.TokenDto;
 import com.Applemango_Backend.auth.repository.RefreshTokenRepository;
 import com.Applemango_Backend.auth.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -51,20 +54,35 @@ public class UserService {
     //로그인 시, 아이디와 비밀번호가 일치하면 User return
     //아이디 혹은 비밀번호가 없거나 다르면 null return
     @Transactional
-    public User login(LoginRequest request) {
-        Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
+    public GlobalResDto login(LoginRequest request, HttpServletResponse response) {
 
-        if(optionalUser.isEmpty()) {
-            return null;
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() ->
+                new RuntimeException("Not found user"));
+
+        if(!encoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Not matches Password");
         }
 
-        User user = optionalUser.get();
+        TokenDto tokenDto = jwtTokenUtil.creatAllToken(request.getEmail());
 
-        if(!user.getPassword().equals(request.getPassword())) {
-            return null;
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findbyUserEmail(request.getEmail());
+
+        if(refreshToken.isPresent()) {
+            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
+        }
+        else {
+            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), request.getEmail());
+            refreshTokenRepository.save(newToken);
         }
 
-        return user;
+        setHeader(response, tokenDto);
+
+        return new GlobalResDto("Success Login", HttpStatus.OK.value());
+
+    }
+    private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
+        response.addHeader(JwtTokenUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+        response.addHeader(JwtTokenUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
     }
 
     //userId를 입력받아 user를 return 해주는 기능
