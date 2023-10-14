@@ -5,6 +5,7 @@ import com.Applemango_Backend.auth.dto.JoinRequest;
 import com.Applemango_Backend.auth.dto.LoginRequest;
 import com.Applemango_Backend.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,9 @@ public class UserService {
 
     // Spring Security를 사용한 로그인 구현 시 사용
     private final BCryptPasswordEncoder encoder;
+
+    @Value("${jwtmodule.secret-key}")
+    private String secretKey;
 
     //회원가입 시, 아이디 중복여부 확인
     public boolean checkEmailDuplicate(String email) {
