@@ -40,6 +40,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
             setAuthentication(jwtTokenUtil.getEmailFromToken(refreshToken));
         }
+
         filterChain.doFilter(request, response);
     }
 

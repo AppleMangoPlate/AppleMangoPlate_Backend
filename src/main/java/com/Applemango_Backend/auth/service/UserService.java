@@ -95,30 +95,4 @@ public class UserService {
         response.addHeader(JwtTokenUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtTokenUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
     }
-
-    //userId를 입력받아 user를 return 해주는 기능
-    //인증, 인가 시 사용됨
-    public User getLoginUserById(Long userId) {
-        if(userId == null) return null;
-
-        Optional<User> optionalUser = userRepository.findById(userId);
-
-        if(optionalUser.isEmpty()) return null;
-
-        return optionalUser.get();
-    }
-
-    //loginId를 입력받아 user를 return 해주는 기능
-    //인증, 인가 시 사용됨
-    public User getLoginUserByEmail(String email) {
-        if(email == null) return null;
-
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-
-        if(optionalUser.isEmpty()) return null;
-
-        return optionalUser.get();
-    }
-
-
 }

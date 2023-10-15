@@ -15,12 +15,15 @@ public class PrincipalDetailsService implements UserDetailsService {
     public final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> {
-                    return new UsernameNotFoundException("해당 유저를 찾을 수 없습니다.");
-                });
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        return new PrincipalDetails(user);
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("Not found User")
+        );
+
+        PrincipalDetails userDetails = new PrincipalDetails();
+        userDetails.setUser(user);
+
+        return userDetails;
     }
 }

@@ -2,7 +2,6 @@ package com.Applemango_Backend.auth.config;
 
 import com.Applemango_Backend.auth.JwtTokenFilter;
 import com.Applemango_Backend.auth.JwtTokenUtil;
-import com.Applemango_Backend.auth.domain.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,9 +31,8 @@ public class JwtSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                        .requestMatchers("/jwt-login/info").authenticated()
-                        .requestMatchers("/jwt-login/admin/**").hasAuthority((UserRole.ADMIN.name()))
-                        .anyRequest().permitAll()
+                        .requestMatchers("/jwt-login/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtTokenFilter(jwtTokenUtil), UsernamePasswordAuthenticationFilter.class);
 

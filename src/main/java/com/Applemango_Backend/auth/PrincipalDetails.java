@@ -11,14 +11,6 @@ public class PrincipalDetails implements UserDetails {
 
     private User user;
 
-    public PrincipalDetails(User user) {
-        this.user = user;
-    }
-
-    public User getUser() {
-        return this.user;
-    }
-
     public void setUser(User user) {
         this.user = user;
     }
