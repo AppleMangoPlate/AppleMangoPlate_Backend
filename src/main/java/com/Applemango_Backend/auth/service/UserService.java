@@ -1,6 +1,6 @@
 package com.Applemango_Backend.auth.service;
 
-import com.Applemango_Backend.auth.JwtTokenUtil;
+import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
 import com.Applemango_Backend.auth.domain.RefreshToken;
 import com.Applemango_Backend.auth.domain.User;
 import com.Applemango_Backend.auth.dto.GlobalResDto;

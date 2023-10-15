@@ -1,6 +1,7 @@
-package com.Applemango_Backend.auth;
+package com.Applemango_Backend.auth.jwt;
 
 import com.Applemango_Backend.auth.domain.User;
+import com.Applemango_Backend.auth.jwt.PrincipalDetails;
 import com.Applemango_Backend.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

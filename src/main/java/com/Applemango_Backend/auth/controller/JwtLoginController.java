@@ -1,7 +1,7 @@
 package com.Applemango_Backend.auth.controller;
 
-import com.Applemango_Backend.auth.JwtTokenUtil;
-import com.Applemango_Backend.auth.PrincipalDetails;
+import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
+import com.Applemango_Backend.auth.jwt.PrincipalDetails;
 import com.Applemango_Backend.auth.dto.GlobalResDto;
 import com.Applemango_Backend.auth.dto.JoinRequest;
 import com.Applemango_Backend.auth.dto.LoginRequest;

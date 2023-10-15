@@ -1,7 +1,7 @@
 package com.Applemango_Backend.auth.config;
 
-import com.Applemango_Backend.auth.JwtTokenFilter;
-import com.Applemango_Backend.auth.JwtTokenUtil;
+import com.Applemango_Backend.auth.jwt.JwtTokenFilter;
+import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

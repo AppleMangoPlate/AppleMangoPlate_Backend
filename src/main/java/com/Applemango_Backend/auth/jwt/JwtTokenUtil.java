@@ -1,4 +1,4 @@
-package com.Applemango_Backend.auth;
+package com.Applemango_Backend.auth.jwt;
 
 import com.Applemango_Backend.auth.domain.RefreshToken;
 import com.Applemango_Backend.auth.dto.TokenDto;

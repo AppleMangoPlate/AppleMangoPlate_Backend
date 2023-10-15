@@ -1,4 +1,4 @@
-package com.Applemango_Backend.auth;
+package com.Applemango_Backend.auth.jwt;
 
 import com.Applemango_Backend.auth.dto.GlobalResDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
