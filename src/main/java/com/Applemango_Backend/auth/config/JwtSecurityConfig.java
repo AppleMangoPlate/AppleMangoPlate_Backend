@@ -3,9 +3,7 @@ package com.Applemango_Backend.auth.config;
 import com.Applemango_Backend.auth.JwtTokenFilter;
 import com.Applemango_Backend.auth.JwtTokenUtil;
 import com.Applemango_Backend.auth.domain.UserRole;
-import com.Applemango_Backend.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -23,11 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class JwtSecurityConfig {
 
-    private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
-
-    @Value("${jwtmodule.secret-key}")
-    private String secretKey;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)throws Exception {
@@ -37,12 +31,12 @@ public class JwtSecurityConfig {
                 .sessionManagement((sessionManagement) -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(new JwtTokenFilter(jwtTokenUtil), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                         .requestMatchers("/jwt-login/info").authenticated()
                         .requestMatchers("/jwt-login/admin/**").hasAuthority((UserRole.ADMIN.name()))
                         .anyRequest().permitAll()
-                );
+                )
+                .addFilterBefore(new JwtTokenFilter(jwtTokenUtil), UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

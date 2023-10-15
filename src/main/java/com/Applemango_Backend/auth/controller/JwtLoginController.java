@@ -1,14 +1,18 @@
 package com.Applemango_Backend.auth.controller;
 
 import com.Applemango_Backend.auth.JwtTokenUtil;
+import com.Applemango_Backend.auth.PrincipalDetails;
 import com.Applemango_Backend.auth.domain.User;
+import com.Applemango_Backend.auth.dto.GlobalResDto;
 import com.Applemango_Backend.auth.dto.JoinRequest;
 import com.Applemango_Backend.auth.dto.LoginRequest;
 import com.Applemango_Backend.auth.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,49 +21,22 @@ import org.springframework.web.bind.annotation.*;
 public class JwtLoginController {
 
     private final UserService userService;
-
-    @Value("${jwtmodule.secret-key}")
-    private String secretKey;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/join")
-    public String join(@RequestBody JoinRequest joinRequest) {
-
-        // loginId 중복 체크
-        if(userService.checkEmailDuplicate(joinRequest.getEmail())) {
-            return "로그인 아이디가 중복됩니다.";
-        }
-        // 닉네임 중복 체크
-        if(userService.checkNickNameDuplicate(joinRequest.getNickName())) {
-            return "닉네임이 중복됩니다.";
-        }
-        // password와 passwordCheck가 같은지 체크
-        if(!joinRequest.getPassword().equals(joinRequest.getPasswordCheck())) {
-            return"바밀번호가 일치하지 않습니다.";
-        }
-
-        userService.join(joinRequest);
-        return "회원가입 성공";
+    public GlobalResDto join(@RequestBody @Valid JoinRequest joinRequest) {
+        return userService.join(joinRequest);
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest loginRequest) {
-        User user= userService.login(loginRequest);
-
-        if(user == null) {
-            return "로그인 아이디 또는 비밀번호가 틀렸습니다.";
-        }
-
-        //로그인 성공 시, jwt token 발급
-        long expireTimeMs = 1000 * 60 * 60; //token 유효시간 = 60분
-
-        String jwtToken = JwtTokenUtil.createToken(user.getEmail(), secretKey, expireTimeMs);
-
-        return jwtToken;
+    public GlobalResDto login(@RequestBody @Valid LoginRequest loginRequest, HttpServletResponse response) {
+        return userService.login(loginRequest, response);
     }
 
     @GetMapping("/info")
     public String userInfo(Authentication authentication) {
-        User loginUser = userService.getLoginUserByEmail(authentication.getName());
+        String email = authentication.getName();
+        User loginUser = userService.getLoginUserByEmail(email);
 
         return String.format("email : %s\nnickName : %s\nphoneNumber : %s\nrole : %s",
                 loginUser.getEmail(), loginUser.getNickName(), loginUser.getPhoneNumber(),loginUser.getRole().name());
@@ -69,6 +46,12 @@ public class JwtLoginController {
     public String adminPage() {
 
         return "관리자 페이지 접근 성공";
+    }
+
+    @GetMapping("/issue/token")
+    public GlobalResDto issuedToken(@AuthenticationPrincipal PrincipalDetails userDetails, HttpServletResponse response) {
+        response.addHeader(JwtTokenUtil.ACCESS_TOKEN, jwtTokenUtil.createToken(userDetails.getUser().getEmail(), "Access"));
+        return new GlobalResDto("Success IssuedToken", HttpStatus.OK.value());
     }
 
 }

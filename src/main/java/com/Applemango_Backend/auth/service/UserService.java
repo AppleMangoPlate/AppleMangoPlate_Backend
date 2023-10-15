@@ -43,6 +43,20 @@ public class UserService {
     //이 과정에서 비밀번호는 암호화되어 저장
     @Transactional
     public GlobalResDto join(JoinRequest request) {
+
+        if(checkEmailDuplicate(request.getEmail())) {
+            throw new RuntimeException("email is duplicated");
+        }
+
+        if(checkNickNameDuplicate(request.getNickName())) {
+            throw new RuntimeException("Nickname is duplicated");
+        }
+
+        // password와 passwordCheck가 같은지 체크
+        if(!request.getPassword().equals(request.getPasswordCheck())) {
+            throw new RuntimeException("Not matches password and passwordcheck");
+        }
+
         userRepository.save(request.toEntity(encoder.encode(request.getPassword())));
         return new GlobalResDto("Success join", HttpStatus.OK.value());
     }
@@ -56,13 +70,13 @@ public class UserService {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() ->
                 new RuntimeException("Not found user"));
 
-        if(!encoder.matches(request.getPassword(), user.getPassword())) {
+        if(!user.getPassword().equals(request.getPassword())) {
             throw new RuntimeException("Not matches Password");
         }
 
         TokenDto tokenDto = jwtTokenUtil.createAllToken(request.getEmail());
 
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findbyUserEmail(request.getEmail());
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUserEmail(request.getEmail());
 
         if(refreshToken.isPresent()) {
             refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));

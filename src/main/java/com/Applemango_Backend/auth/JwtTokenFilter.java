@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
@@ -25,7 +27,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String accessToken = jwtTokenUtil.getHeaderToken(request, "Access");
         String refreshToken = jwtTokenUtil.getHeaderToken(request, "Refresh");
 
-        //Header의 authorization 값이 비어있다면, jwt token을 전송하지 않음 -> 로그인 x
         if (accessToken != null) {
             if (!jwtTokenUtil.tokenValidataion(accessToken)) {
                 jwtExceptionHandler(response, "AccessToken Expired", HttpStatus.BAD_REQUEST);
@@ -54,7 +55,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             String json = new ObjectMapper().writeValueAsString(new GlobalResDto(msg, status.value()));
             response.getWriter().write(json);
         }catch (Exception e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 }

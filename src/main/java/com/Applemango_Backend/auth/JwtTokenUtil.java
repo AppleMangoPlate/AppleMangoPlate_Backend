@@ -91,7 +91,7 @@ public class JwtTokenUtil {
         if (!tokenValidataion(token)) return false;
 
         //DB에 저장된 토큰 비교
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findbyUserEmail(getEmailFromToken(token));
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUserEmail(getEmailFromToken(token));
 
         return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken());
     }
@@ -103,23 +103,5 @@ public class JwtTokenUtil {
 
     public String getEmailFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
-    }
-
-    //claims에서 email 꺼내기
-    public static String getEmail(String token, String secretKey) {
-        return extractClaims(token, secretKey).get("email").toString();
-    }
-
-    //발급된 token의 만료시간이 지났는지 확인
-    public static boolean isExpired(String token, String secretKey) {
-        Date expiredDate = extractClaims(token, secretKey).getExpiration();
-
-        return expiredDate.before(new Date());
-    }
-
-    //secretKey를 사용해 token 파싱
-    private static Claims extractClaims(String token, String secretKey) {
-
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
 }
