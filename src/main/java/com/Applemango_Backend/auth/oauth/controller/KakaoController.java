@@ -17,7 +17,7 @@ public class KakaoController {
     private final KakaoService kakaoService;
     private final Logger logger = LoggerFactory.getLogger(KakaoController.class);
 
-    @PostMapping("/login/oauth2/callback/kakao")
+    @PostMapping("/jwt-login/oauth2/callback/kakao")
     public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestParam("code") String code) {
         String kakaoAccessToken = kakaoService.getKakaoAccessToken(code).getAccess_token();
         return kakaoService.kakaoLogin(kakaoAccessToken);
