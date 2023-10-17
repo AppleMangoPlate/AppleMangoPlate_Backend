@@ -1,22 +1,25 @@
 package com.Applemango_Backend.auth.oauth.service;
 
+import com.Applemango_Backend.auth.domain.RefreshToken;
 import com.Applemango_Backend.auth.domain.User;
+import com.Applemango_Backend.auth.dto.GlobalResDto;
+import com.Applemango_Backend.auth.dto.TokenDto;
+import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
 import com.Applemango_Backend.auth.oauth.dto.KakaoLoginResponse;
 import com.Applemango_Backend.auth.oauth.dto.KakaoTokenDto;
+import com.Applemango_Backend.auth.repository.RefreshTokenRepository;
 import com.Applemango_Backend.auth.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -30,6 +33,8 @@ import java.util.Map;
 public class KakaoService {
 
     private final UserRepository userRepository;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final Logger logger = LoggerFactory.getLogger(KakaoService.class);
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -81,27 +86,34 @@ public class KakaoService {
 
     }
 
-    public ResponseEntity<KakaoLoginResponse> kakaoLogin(String kakaoAccessToken) {
+    public KakaoLoginResponse kakaoLogin(String kakaoAccessToken, HttpServletResponse response) {
         User user = getKakaoInfo(kakaoAccessToken);
 
-        HttpHeaders headers = new HttpHeaders();
-
-        KakaoLoginResponse kakaoLoginResponse = new KakaoLoginResponse();
-        kakaoLoginResponse.setLoginSuccess(true);
-        kakaoLoginResponse.setUser(user);
-
+        // 회원가입 되어있는지 이메일로 확인
+        // 회원가입 안되어있으면 save 시키고 jwt 발급
+        // 회원가입 되어있으면 바로 jwt 발급
         User existOwner = userRepository.findByEmail(user.getEmail()).orElse(null);
-        try {
-            if (existOwner == null) {
+            if (existOwner == null) { // if 회원가입 x
                 logger.info("첫 로그인 회원");
                 userRepository.save(user);
             }
-            kakaoLoginResponse.setLoginSuccess(true);
-            return ResponseEntity.ok().headers(headers).body(kakaoLoginResponse);
-        } catch (Exception e) {
-            kakaoLoginResponse.setLoginSuccess(false);
-            return ResponseEntity.badRequest().body(kakaoLoginResponse);
+
+        TokenDto tokenDto = jwtTokenUtil.createAllToken(user.getEmail());
+
+        RefreshToken refreshToken = refreshTokenRepository.findByUserEmail(user.getEmail()).orElse(null);
+        if(refreshToken!=null){
+            refreshTokenRepository.save(refreshToken.updateToken(tokenDto.getRefreshToken()));
+        } else{
+            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), user.getEmail());
+            refreshTokenRepository.save(newToken);
         }
+
+
+        response.addHeader(JwtTokenUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+        response.addHeader(JwtTokenUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+
+
+        return new KakaoLoginResponse(true, user.getId(), user.getEmail());
     }
 
 
