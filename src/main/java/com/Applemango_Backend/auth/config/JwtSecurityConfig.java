@@ -32,6 +32,7 @@ public class JwtSecurityConfig {
                 )
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                         .requestMatchers("/jwt-login/**").permitAll()
+                        .requestMatchers("/login/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtTokenFilter(jwtTokenUtil), UsernamePasswordAuthenticationFilter.class);
