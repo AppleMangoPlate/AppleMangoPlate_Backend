@@ -63,8 +63,6 @@ public class UserService {
     }
 
 
-    //로그인 시, 아이디와 비밀번호가 일치하면 User return
-    //아이디 혹은 비밀번호가 없거나 다르면 null return
     @Transactional
     public GlobalResDto login(LoginRequest request, HttpServletResponse response) {
 
