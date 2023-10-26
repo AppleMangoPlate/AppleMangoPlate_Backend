@@ -89,6 +89,16 @@ public class UserService {
         return new GlobalResDto("Success Login", HttpStatus.OK.value());
 
     }
+
+    @Transactional
+    public GlobalResDto logout(String userEmail) {
+        if (refreshTokenRepository.findByUserEmail(userEmail) == null)
+            throw new RuntimeException("Not found login user");
+        refreshTokenRepository.deleteRefreshTokenByUserEmail(userEmail);
+
+        return new GlobalResDto("Success Logout", HttpStatus.OK.value());
+    }
+
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
         response.addHeader(JwtTokenUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtTokenUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
