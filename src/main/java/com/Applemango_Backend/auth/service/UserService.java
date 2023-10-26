@@ -62,7 +62,6 @@ public class UserService {
         return new GlobalResDto("Success join", HttpStatus.OK.value());
     }
 
-
     @Transactional
     public GlobalResDto login(LoginRequest request, HttpServletResponse response) {
 
@@ -90,6 +89,7 @@ public class UserService {
         return new GlobalResDto("Success Login", HttpStatus.OK.value());
 
     }
+
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
         response.addHeader(JwtTokenUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtTokenUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
