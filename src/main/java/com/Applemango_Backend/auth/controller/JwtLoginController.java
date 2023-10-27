@@ -31,6 +31,11 @@ public class JwtLoginController {
         return userService.login(loginRequest, response);
     }
 
+    @DeleteMapping("/logout")
+    public GlobalResDto logout(@RequestBody @Valid String userEmail) {
+        return userService.logout(userEmail);
+    }
+
     @GetMapping("/issue/token")
     public GlobalResDto issuedToken(@AuthenticationPrincipal PrincipalDetails userDetails, HttpServletResponse response) {
         response.addHeader(JwtTokenUtil.ACCESS_TOKEN, jwtTokenUtil.createToken(userDetails.getUsername(), "Access"));
