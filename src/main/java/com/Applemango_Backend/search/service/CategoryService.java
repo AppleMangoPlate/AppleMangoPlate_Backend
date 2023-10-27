@@ -12,6 +12,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -21,8 +23,8 @@ public class CategoryService {
     private String server_url = "https://dapi.kakao.com/v2/local/search/keyword.JSON?category_group_code=FD6&size=10&query=";
     private String key = "KakaoAK 3820639f4f307d1a67eb4f32690596f0";
 
-    public String categorization(String keyword,String classify) throws Exception{
-        String result = "";
+    public List<JSONObject> categorization(String keyword,String classify) throws Exception{
+        List<JSONObject> result = new ArrayList<>();
         //Header
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", key);
@@ -41,17 +43,14 @@ public class CategoryService {
                 JSONObject tmp = (JSONObject) documents.get(i);
                 String categorys = String.valueOf(tmp.get("category_name"));
                 String category = categorys.split(" > ")[1];
-                System.out.println(category);
-                if(category == classify) {
-                    System.out.println(tmp);
-                    result += tmp.toString();
+                if(category.equals(classify)) {
+                    result.add(tmp);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        System.out.print(result);
         return result;
     }
 }
