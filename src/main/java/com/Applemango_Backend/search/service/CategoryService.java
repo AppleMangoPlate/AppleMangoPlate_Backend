@@ -41,10 +41,13 @@ public class CategoryService {
             JSONParser jsonParser = new JSONParser();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(response.getBody());
             JSONArray documents = (JSONArray) jsonObject.get("documents");
+
             for(int i = 0; i < 10; i++) {
                 JSONObject tmp = (JSONObject) documents.get(i);
                 String categorys = String.valueOf(tmp.get("category_name"));
                 String category = categorys.split(" > ")[1];
+
+                //카카오 검색결과 카테고리와 파라미터 카테고리가 같을 때
                 if(category.equals(classify)) {
                     result.add(tmp);
                 }
