@@ -1,6 +1,6 @@
 package com.Applemango_Backend.search.service;
 
-
+import org.springframework.beans.factory.annotation.Value;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,9 @@ import java.util.List;
 @Slf4j
 public class CategoryService {
     private String server_url = "https://dapi.kakao.com/v2/local/search/keyword.JSON?category_group_code=FD6&size=10&query=";
-    private String key = "KakaoAK 3820639f4f307d1a67eb4f32690596f0";
+
+    @Value("${search.key}")
+    private String key;
 
     public List<JSONObject> categorization(String keyword,String classify) throws Exception{
         List<JSONObject> result = new ArrayList<>();
