@@ -33,6 +33,7 @@ public class JwtSecurityConfig {
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                         .requestMatchers("/jwt-login/**").permitAll()
                         .requestMatchers("/login/**").permitAll()
+                        .requestMatchers("/search/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtTokenFilter(jwtTokenUtil), UsernamePasswordAuthenticationFilter.class);
