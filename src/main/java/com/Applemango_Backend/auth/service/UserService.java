@@ -62,7 +62,6 @@ public class UserService {
         return new GlobalResDto("Success join", HttpStatus.OK.value());
     }
 
-
     @Transactional
     public GlobalResDto login(LoginRequest request, HttpServletResponse response) {
 
