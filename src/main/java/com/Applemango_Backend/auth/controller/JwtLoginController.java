@@ -6,12 +6,15 @@ import com.Applemango_Backend.auth.dto.GlobalResDto;
 import com.Applemango_Backend.auth.dto.JoinRequest;
 import com.Applemango_Backend.auth.dto.LoginRequest;
 import com.Applemango_Backend.auth.service.UserService;
+import com.Applemango_Backend.image.service.ImageUploadService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,10 +23,15 @@ public class JwtLoginController {
 
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final ImageUploadService imageUploadService;
 
     @PostMapping("/join")
-    public GlobalResDto join(@RequestBody @Valid JoinRequest joinRequest) {
-        return userService.join(joinRequest);
+    public GlobalResDto join(JoinRequest joinRequest) throws IOException {
+        String imageUrl = "";
+        if (joinRequest.getProfileImage() != null) {
+            imageUrl = imageUploadService.uploadImage(joinRequest.getProfileImage());
+        }
+        return userService.join(joinRequest, imageUrl);
     }
 
     @PostMapping("/login")

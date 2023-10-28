@@ -27,4 +27,19 @@ public class User {
     private String phoneNumber;
     private LocalDate createdAt; //생성일
     private LocalDate updatedAt; //수정일
+    private String profileImage; //유저 프로필 이미지
+
+    public static User joinUser(String email, String encodedPassword, String nickName, String phoneNumber, String profileImage) {
+        User user = new User();
+        user.email = email;
+        user.password=encodedPassword;
+        user.nickName=nickName;
+        user.role = UserRole.USER;
+        user.phoneNumber = phoneNumber;
+        user.createdAt = LocalDate.now();
+        user.updatedAt = LocalDate.now();
+        user.profileImage=profileImage;
+
+        return user;
+    }
 }

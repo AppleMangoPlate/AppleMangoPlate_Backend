@@ -43,7 +43,7 @@ public class UserService {
     //JoinRequest를 입력받아 User로 변환 후 저장
     //이 과정에서 비밀번호는 암호화되어 저장
     @Transactional
-    public GlobalResDto join(JoinRequest request) {
+    public GlobalResDto join(JoinRequest request, String imageUrl) {
 
         if(checkEmailDuplicate(request.getEmail())) {
             throw new RuntimeException("email is duplicated");
@@ -58,7 +58,8 @@ public class UserService {
             throw new RuntimeException("Not matches password and passwordcheck");
         }
 
-        userRepository.save(request.toEntity(encoder.encode(request.getPassword())));
+        User user = User.joinUser(request.getEmail(),encoder.encode(request.getPassword()),request.getNickName(),request.getPhoneNumber(),imageUrl);
+        userRepository.save(user);
         return new GlobalResDto("Success join", HttpStatus.OK.value());
     }
 
