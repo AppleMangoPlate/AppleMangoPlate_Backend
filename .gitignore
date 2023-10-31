@@ -37,3 +37,5 @@ out/
 .vscode/
 
 application-Jwt.properties
+application-GCS.properties
+applemango-image-a28687b6b080.json

@@ -5,8 +5,8 @@ import com.Applemango_Backend.auth.domain.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -24,16 +24,6 @@ public class JoinRequest {
     @NotBlank(message = "핸드폰 번호가 비어있습니다.")
     private String phoneNumber;
 
-    // 비밀번호 암호화
-    public User toEntity(String encodedPassword) {
-        return User.builder()
-                .email(this.email)
-                .password(encodedPassword)
-                .nickName(this.nickName)
-                .role(UserRole.USER)
-                .phoneNumber(this.phoneNumber)
-                .createdAt(LocalDate.now())
-                .updatedAt(LocalDate.now())
-                .build();
-    }
+    private MultipartFile profileImage;
+
 }
