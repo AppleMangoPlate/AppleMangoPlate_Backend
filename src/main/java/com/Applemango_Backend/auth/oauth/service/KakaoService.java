@@ -113,7 +113,7 @@ public class KakaoService {
         response.addHeader(JwtTokenUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
 
 
-        return new KakaoLoginResponse(true, user.getId(), user.getEmail());
+        return new KakaoLoginResponse(true, existOwner==null ? user.getId() : existOwner.getId(), user.getEmail());
     }
 
 
