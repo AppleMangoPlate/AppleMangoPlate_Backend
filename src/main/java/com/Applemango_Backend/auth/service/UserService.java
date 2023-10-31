@@ -32,7 +32,14 @@ public class UserService {
 
     //회원가입 시, 아이디 중복여부 확인
     public boolean checkEmailDuplicate(String email) {
-        return userRepository.existsByEmail(email);
+        boolean flag = userRepository.existsByEmail(email);
+        if (flag == false) {
+            flag = true;
+        }
+        else {
+            flag = false;
+        }
+        return flag;
     }
 
     //회원가입 시, 닉네임 중복여부 확인
