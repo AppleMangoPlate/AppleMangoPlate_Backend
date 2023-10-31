@@ -45,10 +45,6 @@ public class UserService {
     @Transactional
     public GlobalResDto join(JoinRequest request, String imageUrl) {
 
-        if(checkEmailDuplicate(request.getEmail())) {
-            throw new RuntimeException("email is duplicated");
-        }
-
         if(checkNickNameDuplicate(request.getNickName())) {
             throw new RuntimeException("Nickname is duplicated");
         }
