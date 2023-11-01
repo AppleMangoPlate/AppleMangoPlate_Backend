@@ -22,6 +22,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/jwt-login")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class JwtLoginController {
 
     private final UserService userService;
