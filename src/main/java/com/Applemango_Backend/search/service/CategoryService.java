@@ -36,7 +36,7 @@ public class CategoryService {
         RestTemplate restTemplate = new RestTemplate();
 
         try {
-            for (int j = 1; j < 46; j++) {
+            for (int j = 1; j < 4; j++) {
                 URI url = URI.create(server_url + URLEncoder.encode(keyword, "UTF-8") + "&page=" + j);
                 RequestEntity<String> request = new RequestEntity<>(headers, HttpMethod.GET, url);
                 ResponseEntity<String> response = restTemplate.exchange(request, String.class);
