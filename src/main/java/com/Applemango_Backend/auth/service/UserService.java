@@ -72,26 +72,27 @@ public class UserService {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() ->
                 new RuntimeException("Not found user"));
 
-        if(!user.getPassword().equals(request.getPassword())) {
+        if(!encoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Not matches Password");
         }
 
-        TokenDto tokenDto = jwtTokenUtil.createAllToken(request.getEmail());
-
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUserEmail(request.getEmail());
-
-        if(refreshToken.isPresent()) {
-            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
-        }
         else {
-            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), request.getEmail());
-            refreshTokenRepository.save(newToken);
+            TokenDto tokenDto = jwtTokenUtil.createAllToken(request.getEmail());
+
+            Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUserEmail(request.getEmail());
+
+            if(refreshToken.isPresent()) {
+                refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
+            }
+            else {
+                RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), request.getEmail());
+                refreshTokenRepository.save(newToken);
+            }
+
+            setHeader(response, tokenDto);
+
+            return new GlobalResDto("Success Login", HttpStatus.OK.value());
         }
-
-        setHeader(response, tokenDto);
-
-        return new GlobalResDto("Success Login", HttpStatus.OK.value());
-
     }
 
     @Transactional
