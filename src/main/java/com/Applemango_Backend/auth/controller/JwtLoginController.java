@@ -1,6 +1,5 @@
 package com.Applemango_Backend.auth.controller;
 
-import com.Applemango_Backend.auth.domain.User;
 import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
 import com.Applemango_Backend.auth.jwt.PrincipalDetails;
 import com.Applemango_Backend.auth.dto.GlobalResDto;
@@ -11,7 +10,6 @@ import com.Applemango_Backend.image.service.ImageUploadService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.mapping.Join;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

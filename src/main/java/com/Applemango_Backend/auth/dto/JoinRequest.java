@@ -1,7 +1,5 @@
 package com.Applemango_Backend.auth.dto;
 
-import com.Applemango_Backend.auth.domain.User;
-import com.Applemango_Backend.auth.domain.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;

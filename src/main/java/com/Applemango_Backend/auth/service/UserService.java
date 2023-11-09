@@ -4,7 +4,6 @@ import com.Applemango_Backend.auth.domain.RefreshToken;
 import com.Applemango_Backend.auth.domain.User;
 import com.Applemango_Backend.auth.dto.*;
 import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
-import com.Applemango_Backend.auth.jwt.PrincipalDetails;
 import com.Applemango_Backend.auth.repository.RefreshTokenRepository;
 import com.Applemango_Backend.auth.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -91,8 +90,10 @@ public class UserService {
 
     //유저 정보 수정
     @Transactional
-    public GlobalResDto updateUser(PrincipalDetails userDetails, UpdateUserDto userDto, String imageUrl) {
-        User user = userDetails.getUser();
+    public GlobalResDto updateUser(String email, UpdateUserDto userDto, String imageUrl) {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new RuntimeException("Not found user"));
+
         user.updateUser(userDto.getNickName(), userDto.getPhoneNumber(), imageUrl);
 
         return new GlobalResDto("Update User Info", HttpStatus.OK.value());

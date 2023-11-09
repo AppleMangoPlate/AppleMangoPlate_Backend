@@ -1,10 +1,10 @@
 package com.Applemango_Backend.auth.dto;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-@Getter
+@Data
 @NoArgsConstructor
 public class UpdateUserDto {
     private String nickName; //유저 별명
