@@ -29,6 +29,7 @@ public class User {
     private LocalDate updatedAt; //수정일
     private String profileImage; //유저 프로필 이미지
 
+    //생성 메서드
     public static User joinUser(String email, String encodedPassword, String nickName, String phoneNumber, String profileImage) {
         User user = new User();
         user.email = email;
@@ -41,5 +42,12 @@ public class User {
         user.profileImage=profileImage;
 
         return user;
+    }
+
+    //유저 정보 수정
+    public void updateUser(String nickName, String phoneNumber, String profileImage) {
+        this.nickName = nickName;
+        this.phoneNumber = phoneNumber;
+        this.profileImage = profileImage;
     }
 }
