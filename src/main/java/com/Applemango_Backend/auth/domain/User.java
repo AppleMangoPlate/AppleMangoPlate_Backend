@@ -49,5 +49,6 @@ public class User {
         this.nickName = nickName;
         this.phoneNumber = phoneNumber;
         this.profileImage = profileImage;
+        this.updatedAt = LocalDate.now();
     }
 }
