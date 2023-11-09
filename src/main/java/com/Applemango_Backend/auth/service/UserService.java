@@ -52,10 +52,6 @@ public class UserService {
     @Transactional
     public GlobalResDto join(JoinRequest request, String imageUrl) {
 
-        if(checkNickNameDuplicate(request.getNickName())) {
-            throw new RuntimeException("Nickname is duplicated");
-        }
-
         // password와 passwordCheck가 같은지 체크
         if(!request.getPassword().equals(request.getPasswordCheck())) {
             throw new RuntimeException("Not matches password and passwordcheck");
