@@ -2,9 +2,9 @@ package com.Applemango_Backend.auth.controller;
 
 import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
 import com.Applemango_Backend.auth.jwt.PrincipalDetails;
-import com.Applemango_Backend.auth.dto.GlobalResDto;
-import com.Applemango_Backend.auth.dto.JoinRequest;
-import com.Applemango_Backend.auth.dto.LoginRequest;
+import com.Applemango_Backend.auth.dto.response.GlobalResDto;
+import com.Applemango_Backend.auth.dto.request.JoinRequest;
+import com.Applemango_Backend.auth.dto.request.LoginRequest;
 import com.Applemango_Backend.auth.service.UserService;
 import com.Applemango_Backend.image.service.ImageUploadService;
 import jakarta.servlet.http.HttpServletResponse;

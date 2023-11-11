@@ -1,4 +1,4 @@
-package com.Applemango_Backend.auth.dto;
+package com.Applemango_Backend.auth.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.Applemango_Backend.auth.jwt;
 
 import com.Applemango_Backend.auth.domain.RefreshToken;
-import com.Applemango_Backend.auth.dto.TokenDto;
+import com.Applemango_Backend.auth.dto.response.TokenDto;
 import com.Applemango_Backend.auth.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

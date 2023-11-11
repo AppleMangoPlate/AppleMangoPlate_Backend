@@ -1,4 +1,4 @@
-package com.Applemango_Backend.auth.dto;
+package com.Applemango_Backend.auth.dto.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

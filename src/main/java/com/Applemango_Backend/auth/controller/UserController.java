@@ -1,7 +1,7 @@
 package com.Applemango_Backend.auth.controller;
 
-import com.Applemango_Backend.auth.dto.GlobalResDto;
-import com.Applemango_Backend.auth.dto.UpdateUserDto;
+import com.Applemango_Backend.auth.dto.response.GlobalResDto;
+import com.Applemango_Backend.auth.dto.request.UpdateUserDto;
 import com.Applemango_Backend.auth.service.UserService;
 import com.Applemango_Backend.image.service.ImageUploadService;
 import lombok.RequiredArgsConstructor;
