@@ -6,8 +6,10 @@ import com.Applemango_Backend.auth.domain.User;
 import com.Applemango_Backend.auth.dto.request.JoinRequest;
 import com.Applemango_Backend.auth.dto.request.LoginRequest;
 import com.Applemango_Backend.auth.dto.request.UpdateUserDto;
+import com.Applemango_Backend.auth.dto.response.BookmarkDto;
 import com.Applemango_Backend.auth.dto.response.GlobalResDto;
 import com.Applemango_Backend.auth.dto.response.TokenDto;
+import com.Applemango_Backend.auth.dto.response.UserDto;
 import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
 import com.Applemango_Backend.auth.repository.BookmarkRepository;
 import com.Applemango_Backend.auth.repository.RefreshTokenRepository;
@@ -107,6 +109,20 @@ public class UserService {
         user.updateUser(userDto.getNickName(), userDto.getPhoneNumber(), imageUrl);
 
         return new GlobalResDto("Update User Info", HttpStatus.OK.value());
+    }
+
+    //유저 정보 조회
+    public UserDto getUser(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new RuntimeException("Not found user"));
+        return new UserDto(user);
+    }
+
+    //유저 북마크 조회
+    public BookmarkDto getUserBookmark(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new RuntimeException("Not found user"));
+        return new BookmarkDto(user.getBookmark());
     }
 
     @Transactional
