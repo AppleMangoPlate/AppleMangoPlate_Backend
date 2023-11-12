@@ -65,7 +65,7 @@ public class UserService {
         }
 
         User user = User.joinUser(request.getEmail(),encoder.encode(request.getPassword()),request.getNickName(),request.getPhoneNumber(),imageUrl);
-        Bookmark bookmark = Bookmark.createBookmark(user);
+        Bookmark bookmark = Bookmark.createBookmark(user); //회원가입 시 북마크 생성
         userRepository.save(user);
         bookmarkRepository.save(bookmark);
         return new GlobalResDto("Success join", HttpStatus.OK.value());

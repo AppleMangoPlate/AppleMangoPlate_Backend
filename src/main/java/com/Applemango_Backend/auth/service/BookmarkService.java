@@ -22,12 +22,12 @@ public class BookmarkService {
 
     //북마크에 식당 추가
     @Transactional
-    public GlobalResDto addBookmarkRestaurant(AddBookmarkRestaurantDto addBookmarkRestaurantDto) {
+    public Long addBookmarkRestaurant(AddBookmarkRestaurantDto addBookmarkRestaurantDto) {
         Bookmark bookmark = bookmarkRepository.findById(addBookmarkRestaurantDto.getBookmarkId()).orElseThrow(() ->
                 new RuntimeException("Bookmark not found"));
         BookmarkRestaurant bookmarkRestaurant = BookmarkRestaurant.createBookmarkRestaurant(bookmark, addBookmarkRestaurantDto.getRestaurantName(), addBookmarkRestaurantDto.getRestaurantImage());
-        bookmarkRestaurantRepository.save(bookmarkRestaurant);
-        return new GlobalResDto("Add restaurant in bookmark", HttpStatus.OK.value());
+
+        return bookmarkRestaurantRepository.save(bookmarkRestaurant).getId();
     }
 
     //북마크에 즐겨찾기 식당 삭제
