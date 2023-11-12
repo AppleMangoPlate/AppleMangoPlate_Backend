@@ -1,7 +1,9 @@
 package com.Applemango_Backend.auth.controller;
 
+import com.Applemango_Backend.auth.dto.response.BookmarkDto;
 import com.Applemango_Backend.auth.dto.response.GlobalResDto;
 import com.Applemango_Backend.auth.dto.request.UpdateUserDto;
+import com.Applemango_Backend.auth.dto.response.UserDto;
 import com.Applemango_Backend.auth.service.UserService;
 import com.Applemango_Backend.image.service.ImageUploadService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,14 @@ public class UserController {
     private final UserService userService;
     private final ImageUploadService imageUploadService;
 
+    //유저 정보 조회
+    @GetMapping("/{email}")
+    public UserDto getUser(@PathVariable String email) {
+        UserDto userDto = userService.getUser(email);
+        return userDto;
+
+    }
+    //유저 정보 수정
     @PutMapping("/{email}/update")
     public GlobalResDto updateUser(@PathVariable String email, UpdateUserDto userDto) throws IOException {
         String imageUrl = "";
@@ -26,5 +36,12 @@ public class UserController {
         }
 
         return userService.updateUser(email,userDto,imageUrl);
+    }
+
+    //유저 북마크 조회
+    @GetMapping("/{email}/bookmark")
+    public BookmarkDto getUserBookmark(@PathVariable String email) {
+        BookmarkDto bookmarkDto = userService.getUserBookmark(email);
+        return bookmarkDto;
     }
 }
