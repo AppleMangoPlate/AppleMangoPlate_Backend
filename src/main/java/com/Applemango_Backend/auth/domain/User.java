@@ -1,5 +1,6 @@
 package com.Applemango_Backend.auth.domain;
 
+import com.Applemango_Backend.bookmark.domain.Bookmark;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,17 +1,17 @@
 package com.Applemango_Backend.auth.service;
 
-import com.Applemango_Backend.auth.domain.Bookmark;
+import com.Applemango_Backend.bookmark.domain.Bookmark;
 import com.Applemango_Backend.auth.domain.RefreshToken;
 import com.Applemango_Backend.auth.domain.User;
 import com.Applemango_Backend.auth.dto.request.JoinRequest;
 import com.Applemango_Backend.auth.dto.request.LoginRequest;
 import com.Applemango_Backend.auth.dto.request.UpdateUserDto;
-import com.Applemango_Backend.auth.dto.response.BookmarkDto;
+import com.Applemango_Backend.bookmark.dto.BookmarkDto;
 import com.Applemango_Backend.auth.dto.response.GlobalResDto;
 import com.Applemango_Backend.auth.dto.response.TokenDto;
 import com.Applemango_Backend.auth.dto.response.UserDto;
 import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
-import com.Applemango_Backend.auth.repository.BookmarkRepository;
+import com.Applemango_Backend.bookmark.repository.BookmarkRepository;
 import com.Applemango_Backend.auth.repository.RefreshTokenRepository;
 import com.Applemango_Backend.auth.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;

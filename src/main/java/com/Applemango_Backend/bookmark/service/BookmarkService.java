@@ -1,14 +1,12 @@
-package com.Applemango_Backend.auth.service;
+package com.Applemango_Backend.bookmark.service;
 
-import com.Applemango_Backend.auth.domain.Bookmark;
-import com.Applemango_Backend.auth.domain.BookmarkRestaurant;
-import com.Applemango_Backend.auth.dto.request.AddBookmarkRestaurantDto;
-import com.Applemango_Backend.auth.dto.response.GlobalResDto;
-import com.Applemango_Backend.auth.repository.BookmarkRepository;
-import com.Applemango_Backend.auth.repository.BookmarkRestaurantRepository;
+import com.Applemango_Backend.bookmark.domain.Bookmark;
+import com.Applemango_Backend.bookmark.domain.BookmarkRestaurant;
+import com.Applemango_Backend.bookmark.dto.AddBookmarkRestaurantDto;
+import com.Applemango_Backend.bookmark.repository.BookmarkRepository;
+import com.Applemango_Backend.bookmark.repository.BookmarkRestaurantRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service

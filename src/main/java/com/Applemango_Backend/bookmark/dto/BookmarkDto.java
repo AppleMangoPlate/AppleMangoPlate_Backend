@@ -1,6 +1,6 @@
-package com.Applemango_Backend.auth.dto.response;
+package com.Applemango_Backend.bookmark.dto;
 
-import com.Applemango_Backend.auth.domain.Bookmark;
+import com.Applemango_Backend.bookmark.domain.Bookmark;
 import lombok.Getter;
 
 import java.util.ArrayList;

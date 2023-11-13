@@ -1,6 +1,6 @@
-package com.Applemango_Backend.auth.repository;
+package com.Applemango_Backend.bookmark.repository;
 
-import com.Applemango_Backend.auth.domain.Bookmark;
+import com.Applemango_Backend.bookmark.domain.Bookmark;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

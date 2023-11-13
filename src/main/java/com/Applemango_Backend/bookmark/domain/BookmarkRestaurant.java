@@ -1,4 +1,4 @@
-package com.Applemango_Backend.auth.domain;
+package com.Applemango_Backend.bookmark.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;

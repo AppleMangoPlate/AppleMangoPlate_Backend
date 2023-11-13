@@ -1,4 +1,4 @@
-package com.Applemango_Backend.auth.dto.request;
+package com.Applemango_Backend.bookmark.dto;
 
 
 import lombok.Data;

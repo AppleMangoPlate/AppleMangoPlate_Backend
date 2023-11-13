@@ -1,6 +1,6 @@
-package com.Applemango_Backend.auth.dto.response;
+package com.Applemango_Backend.bookmark.dto;
 
-import com.Applemango_Backend.auth.domain.BookmarkRestaurant;
+import com.Applemango_Backend.bookmark.domain.BookmarkRestaurant;
 import lombok.Getter;
 
 @Getter

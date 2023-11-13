@@ -1,7 +1,7 @@
-package com.Applemango_Backend.auth.controller;
+package com.Applemango_Backend.bookmark.controller;
 
-import com.Applemango_Backend.auth.dto.request.AddBookmarkRestaurantDto;
-import com.Applemango_Backend.auth.service.BookmarkService;
+import com.Applemango_Backend.bookmark.service.BookmarkService;
+import com.Applemango_Backend.bookmark.dto.AddBookmarkRestaurantDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
