@@ -54,4 +54,6 @@ public class User {
     }
     
     public void setBookmark(Bookmark bookmark) { this.bookmark = bookmark; }
+
+    public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
 }

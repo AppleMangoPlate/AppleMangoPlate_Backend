@@ -125,6 +125,14 @@ public class UserService {
         return new BookmarkDto(user.getBookmark());
     }
 
+    //유저 프로필이미지 삭제
+    public void deleteUserImage(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new RuntimeException("Not found user"));
+        String Null = "";
+        user.setProfileImage(Null);
+    }
+
     @Transactional
     public GlobalResDto logout(String userEmail) {
         if (refreshTokenRepository.findByUserEmail(userEmail) == null)

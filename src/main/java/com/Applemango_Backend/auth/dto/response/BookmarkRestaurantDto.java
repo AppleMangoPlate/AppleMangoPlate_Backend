@@ -12,6 +12,6 @@ public class BookmarkRestaurantDto {
     public BookmarkRestaurantDto(BookmarkRestaurant bookmarkRestaurant) {
         this.bookmarkRestaurantId = bookmarkRestaurant.getId();
         this.restaurantName = bookmarkRestaurant.getRestaurantName();
-        this.restaurantImage = bookmarkRestaurant.getRestaaurantImage();
+        this.restaurantImage = bookmarkRestaurant.getRestaurantImage();
     }
 }

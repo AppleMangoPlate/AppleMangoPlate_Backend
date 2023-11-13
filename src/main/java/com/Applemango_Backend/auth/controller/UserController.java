@@ -1,9 +1,11 @@
 package com.Applemango_Backend.auth.controller;
 
+import com.Applemango_Backend.auth.domain.User;
 import com.Applemango_Backend.auth.dto.response.BookmarkDto;
 import com.Applemango_Backend.auth.dto.response.GlobalResDto;
 import com.Applemango_Backend.auth.dto.request.UpdateUserDto;
 import com.Applemango_Backend.auth.dto.response.UserDto;
+import com.Applemango_Backend.auth.repository.UserRepository;
 import com.Applemango_Backend.auth.service.UserService;
 import com.Applemango_Backend.image.service.ImageUploadService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,13 @@ public class UserController {
         }
 
         return userService.updateUser(email,userDto,imageUrl);
+    }
+
+    //유저 프로필 이미지 삭제
+    @DeleteMapping("/{email}/update/deleteImage")
+    public void deleteUserImage(@PathVariable String email) {
+        imageUploadService.deleteImage(email);
+        userService.deleteUserImage(email);
     }
 
     //유저 북마크 조회

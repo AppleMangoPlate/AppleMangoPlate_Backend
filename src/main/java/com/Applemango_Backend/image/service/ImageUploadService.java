@@ -1,5 +1,8 @@
 package com.Applemango_Backend.image.service;
 
+import com.Applemango_Backend.auth.domain.User;
+import com.Applemango_Backend.auth.repository.UserRepository;
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import jakarta.transaction.Transactional;
@@ -19,6 +22,7 @@ import java.util.UUID;
 public class ImageUploadService {
 
     private final Storage storage;
+    private final UserRepository userRepository;
     private String baseurl = "https://storage.googleapis.com/applemango-image/";
 
     @Value("${spring.cloud.gcp.storage.bucket}")
@@ -35,5 +39,16 @@ public class ImageUploadService {
         );
 
         return baseurl+fileName;
+    }
+
+    public void deleteImage(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new RuntimeException("Not found user"));
+        String image = user.getProfileImage();
+        String fileName = image.substring(48);
+
+        Blob blob = storage.get(bucketName, fileName);
+        Storage.BlobSourceOption precondition = Storage.BlobSourceOption.generationMatch(blob.getGeneration());
+        storage.delete(bucketName, fileName, precondition);
     }
 }
