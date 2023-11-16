@@ -1,6 +1,6 @@
 package com.Applemango_Backend.auth.jwt;
 
-import com.Applemango_Backend.auth.dto.GlobalResDto;
+import com.Applemango_Backend.auth.dto.response.GlobalResDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

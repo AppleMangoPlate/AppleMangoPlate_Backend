@@ -2,8 +2,7 @@ package com.Applemango_Backend.auth.oauth.service;
 
 import com.Applemango_Backend.auth.domain.RefreshToken;
 import com.Applemango_Backend.auth.domain.User;
-import com.Applemango_Backend.auth.dto.GlobalResDto;
-import com.Applemango_Backend.auth.dto.TokenDto;
+import com.Applemango_Backend.auth.dto.response.TokenDto;
 import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
 import com.Applemango_Backend.auth.oauth.dto.KakaoLoginResponse;
 import com.Applemango_Backend.auth.oauth.dto.KakaoTokenDto;

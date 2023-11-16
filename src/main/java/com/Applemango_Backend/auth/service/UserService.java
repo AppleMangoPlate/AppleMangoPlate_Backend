@@ -1,12 +1,17 @@
 package com.Applemango_Backend.auth.service;
 
+import com.Applemango_Backend.bookmark.domain.Bookmark;
 import com.Applemango_Backend.auth.domain.RefreshToken;
 import com.Applemango_Backend.auth.domain.User;
-import com.Applemango_Backend.auth.dto.GlobalResDto;
-import com.Applemango_Backend.auth.dto.JoinRequest;
-import com.Applemango_Backend.auth.dto.LoginRequest;
-import com.Applemango_Backend.auth.dto.TokenDto;
+import com.Applemango_Backend.auth.dto.request.JoinRequest;
+import com.Applemango_Backend.auth.dto.request.LoginRequest;
+import com.Applemango_Backend.auth.dto.request.UpdateUserDto;
+import com.Applemango_Backend.bookmark.dto.BookmarkDto;
+import com.Applemango_Backend.auth.dto.response.GlobalResDto;
+import com.Applemango_Backend.auth.dto.response.TokenDto;
+import com.Applemango_Backend.auth.dto.response.UserDto;
 import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
+import com.Applemango_Backend.bookmark.repository.BookmarkRepository;
 import com.Applemango_Backend.auth.repository.RefreshTokenRepository;
 import com.Applemango_Backend.auth.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,7 +27,9 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenUtil jwtTokenUtil;
 
@@ -52,17 +59,15 @@ public class UserService {
     @Transactional
     public GlobalResDto join(JoinRequest request, String imageUrl) {
 
-        if(checkNickNameDuplicate(request.getNickName())) {
-            throw new RuntimeException("Nickname is duplicated");
-        }
-
         // password와 passwordCheck가 같은지 체크
         if(!request.getPassword().equals(request.getPasswordCheck())) {
             throw new RuntimeException("Not matches password and passwordcheck");
         }
 
         User user = User.joinUser(request.getEmail(),encoder.encode(request.getPassword()),request.getNickName(),request.getPhoneNumber(),imageUrl);
+        Bookmark bookmark = Bookmark.createBookmark(user); //회원가입 시 북마크 생성
         userRepository.save(user);
+        bookmarkRepository.save(bookmark);
         return new GlobalResDto("Success join", HttpStatus.OK.value());
     }
 
@@ -93,6 +98,39 @@ public class UserService {
 
             return new GlobalResDto("Success Login", HttpStatus.OK.value());
         }
+    }
+
+    //유저 정보 수정
+    @Transactional
+    public GlobalResDto updateUser(String email, UpdateUserDto userDto, String imageUrl) {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new RuntimeException("Not found user"));
+
+        user.updateUser(userDto.getNickName(), userDto.getPhoneNumber(), imageUrl);
+
+        return new GlobalResDto("Update User Info", HttpStatus.OK.value());
+    }
+
+    //유저 정보 조회
+    public UserDto getUser(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new RuntimeException("Not found user"));
+        return new UserDto(user);
+    }
+
+    //유저 북마크 조회
+    public BookmarkDto getUserBookmark(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new RuntimeException("Not found user"));
+        return new BookmarkDto(user.getBookmark());
+    }
+
+    //유저 프로필이미지 삭제
+    public void deleteUserImage(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new RuntimeException("Not found user"));
+        String Null = "";
+        user.setProfileImage(Null);
     }
 
     @Transactional
