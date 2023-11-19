@@ -37,4 +37,9 @@ public class Review {
     @LastModifiedDate
     private LocalDateTime modifiedDate; // 수정일
 
+    public void updateReview(int rating, String content){
+        this.rating = rating;
+        this.content = content;
+    }
+
 }

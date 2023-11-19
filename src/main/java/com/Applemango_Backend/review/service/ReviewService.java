@@ -5,7 +5,8 @@ import com.Applemango_Backend.auth.dto.response.GlobalResDto;
 import com.Applemango_Backend.auth.repository.UserRepository;
 import com.Applemango_Backend.review.domain.Review;
 import com.Applemango_Backend.review.domain.ReviewImage;
-import com.Applemango_Backend.review.dto.ReviewRequest;
+import com.Applemango_Backend.review.dto.PatchReviewReq;
+import com.Applemango_Backend.review.dto.PostReviewReq;
 import com.Applemango_Backend.review.repository.ReviewImageRepository;
 import com.Applemango_Backend.review.repository.ReviewRepository;
 import jakarta.transaction.Transactional;
@@ -29,7 +30,7 @@ public class ReviewService {
     private final Logger logger = LoggerFactory.getLogger(ReviewService.class);
 
 
-    public GlobalResDto postReview(ReviewRequest request, List<String> reviewImages) {
+    public GlobalResDto postReview(PostReviewReq request, List<String> reviewImages) {
 
         User user = userRepository.findById(request.getUserId()).orElse(null);
         if (user == null) {
@@ -52,5 +53,30 @@ public class ReviewService {
             reviewImageRepository.save(reviewImage);
         }
         return new GlobalResDto("Success postReview", HttpStatus.OK.value());
+    }
+
+
+    public void deleteFile(Long reviewId) {
+       reviewImageRepository.deleteReviewImageByReview_Id(reviewId);
+
+    }
+
+
+    public GlobalResDto modifyReview(PatchReviewReq request, List<String> reviewImages) {
+        Review review=reviewRepository.findById(request.getReviewId()).orElse(null);
+        if(review==null){
+            logger.error("Review not found with ID: "+request.getReviewId());
+            // 예외처리
+        }
+        review.updateReview(request.getRating(), request.getContent());
+        for (String imageUrl : reviewImages) {
+            ReviewImage reviewImage = ReviewImage.builder()
+                    .review(review)
+                    .reviewImage(imageUrl)
+                    .build();
+            reviewImageRepository.save(reviewImage);
+        }
+
+        return new GlobalResDto("Success patchReview", HttpStatus.OK.value());
     }
 }
