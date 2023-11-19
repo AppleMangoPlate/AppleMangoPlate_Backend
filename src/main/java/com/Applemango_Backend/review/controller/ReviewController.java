@@ -68,5 +68,15 @@ public class ReviewController {
     }
 
 
+    @DeleteMapping("/{reviewId}")
+    public GlobalResDto deleteReview(@PathVariable(name = "reviewId") Long reviewId){
+        try{
+            return reviewService.deleteReview(reviewId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
 }

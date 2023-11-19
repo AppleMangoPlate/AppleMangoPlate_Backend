@@ -79,4 +79,18 @@ public class ReviewService {
 
         return new GlobalResDto("Success patchReview", HttpStatus.OK.value());
     }
+
+
+    @Transactional
+    public GlobalResDto deleteReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId).orElse(null);
+        if (review == null) {
+            logger.error("Review not found with ID: " + reviewId);
+            // 예외처리
+        }
+        reviewRepository.deleteById(review.getId());
+        // 업로드된 사진 삭제
+        deleteFile(reviewId);
+        return new GlobalResDto("Success deleteReview", HttpStatus.OK.value());
+    }
 }
