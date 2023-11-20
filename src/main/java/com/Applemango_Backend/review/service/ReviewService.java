@@ -5,6 +5,7 @@ import com.Applemango_Backend.auth.dto.response.GlobalResDto;
 import com.Applemango_Backend.auth.repository.UserRepository;
 import com.Applemango_Backend.review.domain.Review;
 import com.Applemango_Backend.review.domain.ReviewImage;
+import com.Applemango_Backend.review.dto.GetReviewRes;
 import com.Applemango_Backend.review.dto.PatchReviewReq;
 import com.Applemango_Backend.review.dto.PostReviewReq;
 import com.Applemango_Backend.review.repository.ReviewImageRepository;
@@ -16,7 +17,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -81,7 +88,7 @@ public class ReviewService {
     }
 
 
-    @Transactional
+
     public GlobalResDto deleteReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId).orElse(null);
         if (review == null) {
@@ -93,4 +100,27 @@ public class ReviewService {
         deleteFile(reviewId);
         return new GlobalResDto("Success deleteReview", HttpStatus.OK.value());
     }
+
+    public static String convertLocalDateTimeToLocalDate(LocalDateTime localDateTime) {
+        return localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+
+    public List<GetReviewRes> getReviews(String storeId) {
+           List<Review> reviews = reviewRepository.findAllByStoreIdOrderByIdDesc(storeId);
+           List<GetReviewRes> getReviewRes = reviews.stream()
+                   .map(review -> {
+                       List<String> reviewImages = reviewImageRepository.findReviewImagesByReview_Id(review.getId())
+                               .stream()
+                               .map(ReviewImage::getReviewImage)
+                               .collect(Collectors.toList());
+                       return new GetReviewRes(
+                                review.getId(), review.getRating(), review.getUser().getNickName(),
+                                review.getContent(), convertLocalDateTimeToLocalDate(review.getModifiedDate()),
+                                reviewImages);
+                    })
+                    .collect(Collectors.toList());
+            return getReviewRes;
+    }
+
 }

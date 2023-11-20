@@ -2,6 +2,7 @@ package com.Applemango_Backend.review.controller;
 
 import com.Applemango_Backend.auth.dto.response.GlobalResDto;
 import com.Applemango_Backend.image.service.ImageUploadService;
+import com.Applemango_Backend.review.dto.GetReviewRes;
 import com.Applemango_Backend.review.dto.PatchReviewReq;
 import com.Applemango_Backend.review.dto.PostReviewReq;
 import com.Applemango_Backend.review.service.ReviewService;
@@ -77,6 +78,14 @@ public class ReviewController {
         }
     }
 
+    @GetMapping("/{storeId}")
+    public List<GetReviewRes> getReviews(@PathVariable(name = "storeId") String storeId) {
+        try{
+            return reviewService.getReviews(storeId);
+        } catch (Exception e) {
+        throw new RuntimeException(e);
+    }
+    }
 
 
 }
