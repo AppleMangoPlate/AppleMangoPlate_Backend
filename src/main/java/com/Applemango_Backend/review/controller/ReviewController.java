@@ -1,6 +1,8 @@
 package com.Applemango_Backend.review.controller;
 
 import com.Applemango_Backend.auth.dto.response.GlobalResDto;
+import com.Applemango_Backend.exception.ApiException;
+import com.Applemango_Backend.exception.ApiResponse;
 import com.Applemango_Backend.image.service.ImageUploadService;
 import com.Applemango_Backend.review.dto.GetReviewRes;
 import com.Applemango_Backend.review.dto.PatchReviewReq;
@@ -25,66 +27,72 @@ public class ReviewController {
     private final ImageUploadService imageUploadService;
     private final Logger logger = LoggerFactory.getLogger(ReviewService.class);
     @PostMapping
-    public GlobalResDto postReview(@RequestPart(value = "image", required = false) List<MultipartFile> reviewImages,
-                                   @Validated @RequestPart(value = "postReviewReq") PostReviewReq request) throws IOException {
-        List<String> imageUrls = new ArrayList<>();
-        reviewImages.forEach(file -> {
-            if (!file.isEmpty()) {
-                String imageUrl = null;
-                try {
-                    imageUrl = imageUploadService.uploadImage(file);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+    public ApiResponse<String> postReview(@RequestPart(value = "image", required = false) List<MultipartFile> reviewImages,
+                                          @Validated @RequestPart(value = "postReviewReq") PostReviewReq request) throws IOException {
+        try {
+            List<String> imageUrls = new ArrayList<>();
+            reviewImages.forEach(file -> {
+                if (!file.isEmpty()) {
+                    String imageUrl = null;
+                    try {
+                        imageUrl = imageUploadService.uploadImage(file);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    imageUrls.add(imageUrl);
+                    logger.info("imageUrl: " + imageUrl);
                 }
-                imageUrls.add(imageUrl);
-                logger.info("imageUrl: " + imageUrl);
-            }
-        });
-        return reviewService.postReview(request, imageUrls);
+            });
+            return new ApiResponse<>(reviewService.postReview(request, imageUrls));
+        } catch (ApiException exception) {
+            return new ApiResponse<>(exception.getStatus());
+        }
     }
 
 
     @PatchMapping
-    public GlobalResDto modifyBoard(@RequestPart(value = "image", required = false) List<MultipartFile> reviewImages,
-                                            @Validated @RequestPart(value = "patchReviewReq") PatchReviewReq patchBoardReq) {
-        // 해당 reviewId에 해당하는 reviewImage 삭제
-        reviewService.deleteFile(patchBoardReq.getReviewId());
+    public ApiResponse<String> modifyBoard(@RequestPart(value = "image", required = false) List<MultipartFile> reviewImages,
+                                           @Validated @RequestPart(value = "patchReviewReq") PatchReviewReq patchBoardReq) {
+        try {// 해당 reviewId에 해당하는 reviewImage 삭제
+            reviewService.deleteFile(patchBoardReq.getReviewId());
 
-        // request 사진파일들 추가
-        List<String> imageUrls = new ArrayList<>();
-        reviewImages.forEach(file -> {
-            if (!file.isEmpty()) {
-                String imageUrl = null;
-                try {
-                    imageUrl = imageUploadService.uploadImage(file);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+            // request 사진파일들 추가
+            List<String> imageUrls = new ArrayList<>();
+            reviewImages.forEach(file -> {
+                if (!file.isEmpty()) {
+                    String imageUrl = null;
+                    try {
+                        imageUrl = imageUploadService.uploadImage(file);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    imageUrls.add(imageUrl);
+                    logger.info("imageUrl: " + imageUrl);
                 }
-                imageUrls.add(imageUrl);
-                logger.info("imageUrl: " + imageUrl);
-            }
-        });
-        return reviewService.modifyReview(patchBoardReq, imageUrls);
-
+            });
+            return new ApiResponse<>(reviewService.modifyReview(patchBoardReq, imageUrls));
+        } catch (ApiException exception) {
+            return new ApiResponse<>(exception.getStatus());
+        }
     }
 
 
     @DeleteMapping("/{reviewId}")
-    public GlobalResDto deleteReview(@PathVariable(name = "reviewId") Long reviewId){
+    public ApiResponse<String> deleteReview(@PathVariable(name = "reviewId") Long reviewId){
         try{
-            return reviewService.deleteReview(reviewId);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            return new ApiResponse<>(reviewService.deleteReview(reviewId));
+        } catch (ApiException exception) {
+            return new ApiResponse<>(exception.getStatus());
         }
     }
 
     @GetMapping("/{storeId}")
-    public List<GetReviewRes> getReviews(@PathVariable(name = "storeId") String storeId) {
+    public ApiResponse<List<GetReviewRes>> getReviews(@PathVariable(name = "storeId") String storeId) {
         try{
-            return reviewService.getReviews(storeId);
-        } catch (Exception e) {
-        throw new RuntimeException(e);
-    }
+            return new ApiResponse<>(reviewService.getReviews(storeId));
+        } catch (ApiException exception) {
+            return new ApiResponse<>(exception.getStatus());
+        }
     }
 
 
