@@ -34,6 +34,7 @@ public class JwtSecurityConfig {
                         .requestMatchers("/jwt-login/**").permitAll()
                         .requestMatchers("/login/**").permitAll()
                         .requestMatchers("/search/**").permitAll()
+                        .requestMatchers("/review/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtTokenFilter(jwtTokenUtil), UsernamePasswordAuthenticationFilter.class);
