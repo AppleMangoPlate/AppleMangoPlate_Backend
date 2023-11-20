@@ -3,6 +3,8 @@ package com.Applemango_Backend.review.service;
 import com.Applemango_Backend.auth.domain.User;
 import com.Applemango_Backend.auth.dto.response.GlobalResDto;
 import com.Applemango_Backend.auth.repository.UserRepository;
+import com.Applemango_Backend.exception.ApiException;
+import com.Applemango_Backend.exception.ApiResponseStatus;
 import com.Applemango_Backend.review.domain.Review;
 import com.Applemango_Backend.review.domain.ReviewImage;
 import com.Applemango_Backend.review.dto.GetReviewRes;
@@ -25,6 +27,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.Applemango_Backend.exception.ApiResponseStatus.NONE_EXIST_REVIEW;
+import static com.Applemango_Backend.exception.ApiResponseStatus.NONE_EXIST_USER;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -37,13 +42,11 @@ public class ReviewService {
     private final Logger logger = LoggerFactory.getLogger(ReviewService.class);
 
 
-    public GlobalResDto postReview(PostReviewReq request, List<String> reviewImages) {
+    public String postReview(PostReviewReq request, List<String> reviewImages) {
 
         User user = userRepository.findById(request.getUserId()).orElse(null);
         if (user == null) {
-            // 사용자가 없는 경우에 대한 예외 처리
-            logger.error("User not found with ID: " + request.getUserId());
-            // return;
+            throw new ApiException(NONE_EXIST_USER);
         }
         Review review = Review.builder()
                 .user(user)
@@ -59,21 +62,20 @@ public class ReviewService {
                     .build();
             reviewImageRepository.save(reviewImage);
         }
-        return new GlobalResDto("Success postReview", HttpStatus.OK.value());
+        return "Success postReview";
     }
 
 
     public void deleteFile(Long reviewId) {
-       reviewImageRepository.deleteReviewImageByReview_Id(reviewId);
+        reviewImageRepository.deleteReviewImageByReview_Id(reviewId);
 
     }
 
 
-    public GlobalResDto modifyReview(PatchReviewReq request, List<String> reviewImages) {
+    public String modifyReview(PatchReviewReq request, List<String> reviewImages) {
         Review review=reviewRepository.findById(request.getReviewId()).orElse(null);
         if(review==null){
-            logger.error("Review not found with ID: "+request.getReviewId());
-            // 예외처리
+            throw new ApiException(NONE_EXIST_REVIEW);
         }
         review.updateReview(request.getRating(), request.getContent());
         for (String imageUrl : reviewImages) {
@@ -84,21 +86,20 @@ public class ReviewService {
             reviewImageRepository.save(reviewImage);
         }
 
-        return new GlobalResDto("Success patchReview", HttpStatus.OK.value());
+        return "Success patchReview";
     }
 
 
 
-    public GlobalResDto deleteReview(Long reviewId) {
+    public String deleteReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId).orElse(null);
         if (review == null) {
-            logger.error("Review not found with ID: " + reviewId);
-            // 예외처리
+            throw new ApiException(NONE_EXIST_REVIEW);
         }
         reviewRepository.deleteById(review.getId());
         // 업로드된 사진 삭제
         deleteFile(reviewId);
-        return new GlobalResDto("Success deleteReview", HttpStatus.OK.value());
+        return "Success deleteReview";
     }
 
     public static String convertLocalDateTimeToLocalDate(LocalDateTime localDateTime) {
@@ -107,20 +108,20 @@ public class ReviewService {
 
 
     public List<GetReviewRes> getReviews(String storeId) {
-           List<Review> reviews = reviewRepository.findAllByStoreIdOrderByIdDesc(storeId);
-           List<GetReviewRes> getReviewRes = reviews.stream()
-                   .map(review -> {
-                       List<String> reviewImages = reviewImageRepository.findReviewImagesByReview_Id(review.getId())
-                               .stream()
-                               .map(ReviewImage::getReviewImage)
-                               .collect(Collectors.toList());
-                       return new GetReviewRes(
-                                review.getId(), review.getRating(), review.getUser().getNickName(),
-                                review.getContent(), convertLocalDateTimeToLocalDate(review.getModifiedDate()),
-                                reviewImages);
-                    })
-                    .collect(Collectors.toList());
-            return getReviewRes;
+        List<Review> reviews = reviewRepository.findAllByStoreIdOrderByIdDesc(storeId);
+        List<GetReviewRes> getReviewRes = reviews.stream()
+                .map(review -> {
+                    List<String> reviewImages = reviewImageRepository.findReviewImagesByReview_Id(review.getId())
+                            .stream()
+                            .map(ReviewImage::getReviewImage)
+                            .collect(Collectors.toList());
+                    return new GetReviewRes(
+                            review.getId(), review.getRating(), review.getUser().getNickName(),
+                            review.getContent(), convertLocalDateTimeToLocalDate(review.getModifiedDate()),
+                            reviewImages);
+                })
+                .collect(Collectors.toList());
+        return getReviewRes;
     }
 
 }
