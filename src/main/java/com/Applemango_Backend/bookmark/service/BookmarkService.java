@@ -30,10 +30,12 @@ public class BookmarkService {
 
     //북마크에 즐겨찾기 식당 삭제
     @Transactional
-    public void deleteBookmarkRestaurant(Long bookmarkRestaurantId) {
+    public String deleteBookmarkRestaurant(Long bookmarkRestaurantId) {
         BookmarkRestaurant bookmarkRestaurant = bookmarkRestaurantRepository.findById(bookmarkRestaurantId).orElseThrow(() ->
                 new RuntimeException("Bookmark_restaurant not found"));
         bookmarkRestaurantRepository.delete(bookmarkRestaurant);
+
+        return "Success deleteRestaurant";
     }
 
 }
