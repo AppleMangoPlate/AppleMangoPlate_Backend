@@ -6,6 +6,7 @@ import com.Applemango_Backend.auth.dto.response.GlobalResDto;
 import com.Applemango_Backend.auth.dto.request.JoinRequest;
 import com.Applemango_Backend.auth.dto.request.LoginRequest;
 import com.Applemango_Backend.auth.service.UserService;
+import com.Applemango_Backend.exception.ApiResponse;
 import com.Applemango_Backend.image.service.ImageUploadService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -28,12 +29,13 @@ public class JwtLoginController {
     private final ImageUploadService imageUploadService;
 
     @PostMapping("/join")
-    public GlobalResDto join(JoinRequest joinRequest) throws IOException {
+    public ApiResponse<String> join(JoinRequest joinRequest) throws IOException {
         String imageUrl = "";
         if (joinRequest.getProfileImage() != null) {
             imageUrl = imageUploadService.uploadImage(joinRequest.getProfileImage());
         }
-        return userService.join(joinRequest, imageUrl);
+
+        return new ApiResponse<>(userService.join(joinRequest, imageUrl));
     }
 
     @GetMapping(value = "/join/{email}")
@@ -42,13 +44,13 @@ public class JwtLoginController {
     }
 
     @PostMapping("/login")
-    public GlobalResDto login(@RequestBody @Valid LoginRequest loginRequest, HttpServletResponse response) {
-        return userService.login(loginRequest, response);
+    public ApiResponse<String> login(@RequestBody @Valid LoginRequest loginRequest, HttpServletResponse response) {
+        return new ApiResponse<>(userService.login(loginRequest, response));
     }
 
-    @DeleteMapping("/logout")
-    public GlobalResDto logout(@RequestBody @Valid String userEmail) {
-        return userService.logout(userEmail);
+    @DeleteMapping("/logout/{userEmail}")
+    public ApiResponse<String> logout(@PathVariable String userEmail) {
+        return new ApiResponse<>(userService.logout(userEmail));
     }
 
     @GetMapping("/issue/token")
