@@ -1,5 +1,6 @@
 package com.Applemango_Backend.auth.service;
 
+import com.Applemango_Backend.auth.dto.response.LoginUserDto;
 import com.Applemango_Backend.bookmark.domain.Bookmark;
 import com.Applemango_Backend.auth.domain.RefreshToken;
 import com.Applemango_Backend.auth.domain.User;
@@ -70,7 +71,7 @@ public class UserService {
     }
 
     @Transactional
-    public String login(LoginRequest request, HttpServletResponse response) {
+    public LoginUserDto login(LoginRequest request, HttpServletResponse response) {
 
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() ->
                 new RuntimeException("Not found user"));
@@ -94,7 +95,10 @@ public class UserService {
 
             setHeader(response, tokenDto);
 
-            return user.getEmail();
+            String access_token = tokenDto.getAccessToken();
+            String refresh_token = tokenDto.getRefreshToken();
+
+            return new LoginUserDto(user.getEmail(),access_token,refresh_token);
         }
     }
 
