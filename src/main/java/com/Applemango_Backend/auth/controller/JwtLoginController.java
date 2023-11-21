@@ -1,5 +1,6 @@
 package com.Applemango_Backend.auth.controller;
 
+import com.Applemango_Backend.auth.dto.response.LoginUserDto;
 import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
 import com.Applemango_Backend.auth.jwt.PrincipalDetails;
 import com.Applemango_Backend.auth.dto.response.GlobalResDto;
@@ -44,7 +45,7 @@ public class JwtLoginController {
     }
 
     @PostMapping("/login")
-    public ApiResponse<String> login(@RequestBody @Valid LoginRequest loginRequest, HttpServletResponse response) {
+    public ApiResponse<LoginUserDto> login(@RequestBody @Valid LoginRequest loginRequest, HttpServletResponse response) {
         return new ApiResponse<>(userService.login(loginRequest, response));
     }
 
