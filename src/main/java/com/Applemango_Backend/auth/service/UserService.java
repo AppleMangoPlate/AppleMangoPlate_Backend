@@ -7,7 +7,6 @@ import com.Applemango_Backend.auth.dto.request.JoinRequest;
 import com.Applemango_Backend.auth.dto.request.LoginRequest;
 import com.Applemango_Backend.auth.dto.request.UpdateUserDto;
 import com.Applemango_Backend.bookmark.dto.BookmarkDto;
-import com.Applemango_Backend.auth.dto.response.GlobalResDto;
 import com.Applemango_Backend.auth.dto.response.TokenDto;
 import com.Applemango_Backend.auth.dto.response.UserDto;
 import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
@@ -17,7 +16,6 @@ import com.Applemango_Backend.auth.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +55,7 @@ public class UserService {
     //JoinRequest를 입력받아 User로 변환 후 저장
     //이 과정에서 비밀번호는 암호화되어 저장
     @Transactional
-    public GlobalResDto join(JoinRequest request, String imageUrl) {
+    public String join(JoinRequest request, String imageUrl) {
 
         // password와 passwordCheck가 같은지 체크
         if(!request.getPassword().equals(request.getPasswordCheck())) {
@@ -68,11 +66,11 @@ public class UserService {
         Bookmark bookmark = Bookmark.createBookmark(user); //회원가입 시 북마크 생성
         userRepository.save(user);
         bookmarkRepository.save(bookmark);
-        return new GlobalResDto("Success join", HttpStatus.OK.value());
+        return "Success Join";
     }
 
     @Transactional
-    public GlobalResDto login(LoginRequest request, HttpServletResponse response) {
+    public String login(LoginRequest request, HttpServletResponse response) {
 
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() ->
                 new RuntimeException("Not found user"));
@@ -96,19 +94,19 @@ public class UserService {
 
             setHeader(response, tokenDto);
 
-            return new GlobalResDto("Success Login", HttpStatus.OK.value());
+            return user.getEmail();
         }
     }
 
     //유저 정보 수정
     @Transactional
-    public GlobalResDto updateUser(String email, UpdateUserDto userDto, String imageUrl) {
+    public String updateUser(String email, UpdateUserDto userDto, String imageUrl) {
         User user = userRepository.findByEmail(email).orElseThrow(() ->
                 new RuntimeException("Not found user"));
 
         user.updateUser(userDto.getNickName(), userDto.getPhoneNumber(), imageUrl);
 
-        return new GlobalResDto("Update User Info", HttpStatus.OK.value());
+        return "Success updateUser";
     }
 
     //유저 정보 조회
@@ -126,20 +124,22 @@ public class UserService {
     }
 
     //유저 프로필이미지 삭제
-    public void deleteUserImage(String email) {
+    public String deleteUserImage(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() ->
                 new RuntimeException("Not found user"));
         String Null = "";
         user.setProfileImage(Null);
+
+        return "Success delete profileImage";
     }
 
     @Transactional
-    public GlobalResDto logout(String userEmail) {
-        if (refreshTokenRepository.findByUserEmail(userEmail) == null)
-            throw new RuntimeException("Not found login user");
-        refreshTokenRepository.deleteRefreshTokenByUserEmail(userEmail);
+    public String logout(String userEmail) {
+        RefreshToken refreshToken = refreshTokenRepository.findByUserEmail(userEmail).orElseThrow(() ->
+                new RuntimeException("Not found login user"));
+        refreshTokenRepository.delete(refreshToken);
 
-        return new GlobalResDto("Success Logout", HttpStatus.OK.value());
+        return "Success Logout";
     }
 
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
