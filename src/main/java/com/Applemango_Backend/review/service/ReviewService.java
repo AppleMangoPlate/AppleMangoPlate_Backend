@@ -96,10 +96,16 @@ public class ReviewService {
 
 
 
-    public String deleteReview(Long reviewId) {
+    public String deleteReview(Long reviewId, String email) {
         Review review = reviewRepository.findById(reviewId).orElse(null);
         if (review == null) {
             throw new ApiException(NONE_EXIST_REVIEW);
+        }
+        User user=userRepository.findByEmail(email).orElse(null);
+        if(user==null){
+            throw new ApiException(NONE_EXIST_USER);
+        } else if(user.getId()!=review.getUser().getId()){
+            throw new ApiException(INVALID_USER_JWT);
         }
         reviewRepository.deleteById(review.getId());
         // 업로드된 사진 삭제

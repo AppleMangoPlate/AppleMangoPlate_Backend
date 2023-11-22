@@ -86,9 +86,11 @@ public class ReviewController {
 
 
     @DeleteMapping("/{reviewId}")
-    public ApiResponse<String> deleteReview(@PathVariable(name = "reviewId") Long reviewId){
+    public ApiResponse<String> deleteReview(@PathVariable(name = "reviewId") Long reviewId, HttpServletRequest request){
         try{
-            return new ApiResponse<>(reviewService.deleteReview(reviewId));
+            String token = jwtTokenUtil.getHeaderToken(request, "Access");
+            String email= jwtTokenUtil.getEmailFromToken(token);
+            return new ApiResponse<>(reviewService.deleteReview(reviewId, email));
         } catch (ApiException exception) {
             return new ApiResponse<>(exception.getStatus());
         }
