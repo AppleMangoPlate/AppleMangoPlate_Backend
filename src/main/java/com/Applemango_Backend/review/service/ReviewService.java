@@ -124,4 +124,25 @@ public class ReviewService {
         return getReviewRes;
     }
 
+
+    public List<GetReviewRes> getReviewsById(String email) {
+        User user=userRepository.findByEmail(email).orElse(null);
+        if(user==null){
+            throw new ApiException(NONE_EXIST_USER);
+        }
+        List<Review> reviews=reviewRepository.findAllByUserIdOrderByIdDesc(user.getId());
+        List<GetReviewRes> getReviewRes = reviews.stream()
+                .map(review -> {
+                    List<String> reviewImages = reviewImageRepository.findReviewImagesByReview_Id(review.getId())
+                            .stream()
+                            .map(ReviewImage::getReviewImage)
+                            .collect(Collectors.toList());
+                    return new GetReviewRes(
+                            review.getId(), review.getRating(), review.getUser().getNickName(),
+                            review.getContent(), convertLocalDateTimeToLocalDate(review.getModifiedDate()),
+                            reviewImages);
+                })
+                .collect(Collectors.toList());
+        return getReviewRes;
+    }
 }
