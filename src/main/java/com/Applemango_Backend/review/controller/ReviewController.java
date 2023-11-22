@@ -95,5 +95,16 @@ public class ReviewController {
         }
     }
 
+    @GetMapping("/my")
+    public ApiResponse<List<GetReviewRes>> getReviewsById(HttpServletRequest request) {
+        try{
+            String token = jwtTokenUtil.getHeaderToken(request, "Access");
+            String email= jwtTokenUtil.getEmailFromToken(token);
+            return new ApiResponse<>(reviewService.getReviewsById(email));
+        } catch (ApiException exception) {
+            return new ApiResponse<>(exception.getStatus());
+        }
+    }
+
 
 }
