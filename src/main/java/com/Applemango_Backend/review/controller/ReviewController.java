@@ -1,6 +1,7 @@
 package com.Applemango_Backend.review.controller;
 
 import com.Applemango_Backend.auth.dto.response.GlobalResDto;
+import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
 import com.Applemango_Backend.exception.ApiException;
 import com.Applemango_Backend.exception.ApiResponse;
 import com.Applemango_Backend.image.service.ImageUploadService;
@@ -8,6 +9,7 @@ import com.Applemango_Backend.review.dto.GetReviewRes;
 import com.Applemango_Backend.review.dto.PatchReviewReq;
 import com.Applemango_Backend.review.dto.PostReviewReq;
 import com.Applemango_Backend.review.service.ReviewService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +28,13 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final ImageUploadService imageUploadService;
     private final Logger logger = LoggerFactory.getLogger(ReviewService.class);
+    private final JwtTokenUtil jwtTokenUtil;
     @PostMapping
     public ApiResponse<String> postReview(@RequestPart(value = "image", required = false) List<MultipartFile> reviewImages,
-                                          @Validated @RequestPart(value = "postReviewReq") PostReviewReq request) throws IOException {
+                                          @Validated @RequestPart(value = "postReviewReq") PostReviewReq request, HttpServletRequest servletRequest) throws IOException {
         try {
+            String token = jwtTokenUtil.getHeaderToken(servletRequest, "Access");
+            String email= jwtTokenUtil.getEmailFromToken(token);
             List<String> imageUrls = new ArrayList<>();
             reviewImages.forEach(file -> {
                 if (!file.isEmpty()) {
@@ -43,7 +48,7 @@ public class ReviewController {
                     logger.info("imageUrl: " + imageUrl);
                 }
             });
-            return new ApiResponse<>(reviewService.postReview(request, imageUrls));
+            return new ApiResponse<>(reviewService.postReview(request, imageUrls, email));
         } catch (ApiException exception) {
             return new ApiResponse<>(exception.getStatus());
         }

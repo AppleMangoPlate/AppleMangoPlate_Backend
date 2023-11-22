@@ -42,9 +42,9 @@ public class ReviewService {
     private final Logger logger = LoggerFactory.getLogger(ReviewService.class);
 
 
-    public String postReview(PostReviewReq request, List<String> reviewImages) {
+    public String postReview(PostReviewReq request, List<String> reviewImages, String email) {
 
-        User user = userRepository.findById(request.getUserId()).orElse(null);
+        User user=userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new ApiException(NONE_EXIST_USER);
         }
