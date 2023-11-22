@@ -118,7 +118,11 @@ public class ReviewService {
     }
 
 
-    public List<GetReviewRes> getReviews(String storeId) {
+    public List<GetReviewRes> getReviews(String storeId, String email) {
+        User user=userRepository.findByEmail(email).orElse(null);
+        if(user==null){
+            throw new ApiException(NONE_EXIST_USER);
+        }
         List<Review> reviews = reviewRepository.findAllByStoreIdOrderByIdDesc(storeId);
         List<GetReviewRes> getReviewRes = reviews.stream()
                 .map(review -> {

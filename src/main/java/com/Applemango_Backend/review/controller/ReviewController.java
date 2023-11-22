@@ -97,9 +97,11 @@ public class ReviewController {
     }
 
     @GetMapping("/{storeId}")
-    public ApiResponse<List<GetReviewRes>> getReviews(@PathVariable(name = "storeId") String storeId) {
+    public ApiResponse<List<GetReviewRes>> getReviews(@PathVariable(name = "storeId") String storeId, HttpServletRequest request) {
         try{
-            return new ApiResponse<>(reviewService.getReviews(storeId));
+            String token = jwtTokenUtil.getHeaderToken(request, "Access");
+            String email= jwtTokenUtil.getEmailFromToken(token);
+            return new ApiResponse<>(reviewService.getReviews(storeId, email));
         } catch (ApiException exception) {
             return new ApiResponse<>(exception.getStatus());
         }
