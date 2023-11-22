@@ -27,8 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.Applemango_Backend.exception.ApiResponseStatus.NONE_EXIST_REVIEW;
-import static com.Applemango_Backend.exception.ApiResponseStatus.NONE_EXIST_USER;
+import static com.Applemango_Backend.exception.ApiResponseStatus.*;
 
 @Service
 @Transactional
@@ -42,9 +41,9 @@ public class ReviewService {
     private final Logger logger = LoggerFactory.getLogger(ReviewService.class);
 
 
-    public String postReview(PostReviewReq request, List<String> reviewImages) {
+    public String postReview(PostReviewReq request, List<String> reviewImages, String email) {
 
-        User user = userRepository.findById(request.getUserId()).orElse(null);
+        User user=userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new ApiException(NONE_EXIST_USER);
         }
@@ -72,10 +71,16 @@ public class ReviewService {
     }
 
 
-    public String modifyReview(PatchReviewReq request, List<String> reviewImages) {
+    public String modifyReview(PatchReviewReq request, List<String> reviewImages, String email) {
         Review review=reviewRepository.findById(request.getReviewId()).orElse(null);
         if(review==null){
             throw new ApiException(NONE_EXIST_REVIEW);
+        }
+        User user=userRepository.findByEmail(email).orElse(null);
+        if(user==null){
+            throw new ApiException(NONE_EXIST_USER);
+        } else if(user.getId()!=review.getUser().getId()){
+            throw new ApiException(INVALID_USER_JWT);
         }
         review.updateReview(request.getRating(), request.getContent());
         for (String imageUrl : reviewImages) {
@@ -91,10 +96,16 @@ public class ReviewService {
 
 
 
-    public String deleteReview(Long reviewId) {
+    public String deleteReview(Long reviewId, String email) {
         Review review = reviewRepository.findById(reviewId).orElse(null);
         if (review == null) {
             throw new ApiException(NONE_EXIST_REVIEW);
+        }
+        User user=userRepository.findByEmail(email).orElse(null);
+        if(user==null){
+            throw new ApiException(NONE_EXIST_USER);
+        } else if(user.getId()!=review.getUser().getId()){
+            throw new ApiException(INVALID_USER_JWT);
         }
         reviewRepository.deleteById(review.getId());
         // 업로드된 사진 삭제
@@ -107,7 +118,11 @@ public class ReviewService {
     }
 
 
-    public List<GetReviewRes> getReviews(String storeId) {
+    public List<GetReviewRes> getReviews(String storeId, String email) {
+        User user=userRepository.findByEmail(email).orElse(null);
+        if(user==null){
+            throw new ApiException(NONE_EXIST_USER);
+        }
         List<Review> reviews = reviewRepository.findAllByStoreIdOrderByIdDesc(storeId);
         List<GetReviewRes> getReviewRes = reviews.stream()
                 .map(review -> {
