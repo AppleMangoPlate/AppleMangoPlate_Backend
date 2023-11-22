@@ -57,8 +57,11 @@ public class ReviewController {
 
     @PatchMapping
     public ApiResponse<String> modifyBoard(@RequestPart(value = "image", required = false) List<MultipartFile> reviewImages,
-                                           @Validated @RequestPart(value = "patchReviewReq") PatchReviewReq patchBoardReq) {
-        try {// 해당 reviewId에 해당하는 reviewImage 삭제
+                                           @Validated @RequestPart(value = "patchReviewReq") PatchReviewReq patchBoardReq, HttpServletRequest servletRequest) {
+        try {
+            String token = jwtTokenUtil.getHeaderToken(servletRequest, "Access");
+            String email= jwtTokenUtil.getEmailFromToken(token);
+            // 해당 reviewId에 해당하는 reviewImage 삭제
             reviewService.deleteFile(patchBoardReq.getReviewId());
 
             // request 사진파일들 추가
@@ -75,7 +78,7 @@ public class ReviewController {
                     logger.info("imageUrl: " + imageUrl);
                 }
             });
-            return new ApiResponse<>(reviewService.modifyReview(patchBoardReq, imageUrls));
+            return new ApiResponse<>(reviewService.modifyReview(patchBoardReq, imageUrls, email));
         } catch (ApiException exception) {
             return new ApiResponse<>(exception.getStatus());
         }
