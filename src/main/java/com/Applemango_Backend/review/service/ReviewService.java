@@ -7,6 +7,7 @@ import com.Applemango_Backend.exception.ApiException;
 import com.Applemango_Backend.exception.ApiResponseStatus;
 import com.Applemango_Backend.review.domain.Review;
 import com.Applemango_Backend.review.domain.ReviewImage;
+import com.Applemango_Backend.review.dto.GetReviewAndAvg;
 import com.Applemango_Backend.review.dto.GetReviewRes;
 import com.Applemango_Backend.review.dto.PatchReviewReq;
 import com.Applemango_Backend.review.dto.PostReviewReq;
@@ -118,7 +119,7 @@ public class ReviewService {
     }
 
 
-    public List<GetReviewRes> getReviews(String storeId, String email) {
+    public GetReviewAndAvg getReviews(String storeId, String email) {
         User user=userRepository.findByEmail(email).orElse(null);
         if(user==null){
             throw new ApiException(NONE_EXIST_USER);
@@ -136,7 +137,15 @@ public class ReviewService {
                             reviewImages);
                 })
                 .collect(Collectors.toList());
-        return getReviewRes;
+        Double avgRating = reviewRepository.getAverageRatingByStoreId(storeId);
+        avgRating=Math.round(avgRating * 10.0)/10.0;
+        // 결과를 담을 리스트 선언
+        GetReviewAndAvg getReviewAndAvg = GetReviewAndAvg.builder().
+                review(getReviewRes)
+                .avgRating(avgRating)
+                .build();
+
+        return getReviewAndAvg;
     }
 
 
