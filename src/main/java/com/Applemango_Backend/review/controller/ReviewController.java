@@ -5,6 +5,7 @@ import com.Applemango_Backend.auth.jwt.JwtTokenUtil;
 import com.Applemango_Backend.exception.ApiException;
 import com.Applemango_Backend.exception.ApiResponse;
 import com.Applemango_Backend.image.service.ImageUploadService;
+import com.Applemango_Backend.review.dto.GetReviewAndAvg;
 import com.Applemango_Backend.review.dto.GetReviewRes;
 import com.Applemango_Backend.review.dto.PatchReviewReq;
 import com.Applemango_Backend.review.dto.PostReviewReq;
@@ -97,7 +98,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{storeId}")
-    public ApiResponse<List<GetReviewRes>> getReviews(@PathVariable(name = "storeId") String storeId, HttpServletRequest request) {
+    public ApiResponse<GetReviewAndAvg> getReviews(@PathVariable(name = "storeId") String storeId, HttpServletRequest request) {
         try{
             String token = jwtTokenUtil.getHeaderToken(request, "Access");
             String email= jwtTokenUtil.getEmailFromToken(token);
